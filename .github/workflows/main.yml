@@ -16,7 +16,7 @@ jobs:
       - name: Clone the ipxe repo
         run: "git clone git://git.ipxe.org/ipxe.git"
       - name: Make a new iso
-        run: "cd ipxe/src && make DEBUG=ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.iso && make DEBUG=ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.efi"
+        run: "cd ipxe/src && make DEBUG=udp,ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.iso && make DEBUG=ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.efi"
       - name: Get the ipxe iso
         run: "cp ipxe/src/bin-x86_64-efi/ipxe.{efi,iso} ./"
       - name: Cleanup
