@@ -1,0 +1,40 @@
+name: 'Re-Generate Ipxe Uefi Iso once a week'
+on:
+  push:
+  schedule:
+    - cron: '0 14 * * 1'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Install needed packages
+        run: "sudo apt-get install -y p7zip-full mkisofs gcc binutils make perl liblzma-dev mtools syslinux isolinux"
+      - name: Clone the ipxe repo
+        run: "git clone git://git.ipxe.org/ipxe.git"
+      - name: Make a new iso
+        run: "cd ipxe/src && make DEBUG=ipv6,dhcpv6,icmpv6 bin/ipxe.iso"
+      - name: Get the ipxe iso
+        run: "cp ipxe/src/bin/ipxe.iso ./"
+      - name: Cleanup
+        run: "rm -rf ipxe"
+      - name: Get the ipxe efi file
+        run: "wget http://boot.ipxe.org/ipxe.efi"
+      - name: Create directories
+        run: "mkdir -p ipxe/EFI/boot/"
+      - name: Extract the ipxe iso
+        run: "7z x ipxe.iso -oipxe/EFI/boot/"
+      - name: Move the efi file
+        run: "mv ipxe.efi ipxe/EFI/boot/bootx64.efi"
+      - name: Create the iso
+        run: "mkisofs -o ipxe_uefi.iso ipxe"
+      - name: List files
+        run: "ls -alh ipxe/"
+      - name: Cleanup
+        run: "rm -rf ipxe ipxe.iso"
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatic Update

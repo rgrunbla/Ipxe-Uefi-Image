@@ -1,0 +1,1 @@
+This repository generates an `.iso` of IPXE suitable to use as a UEFI boot media in VirtualBox, once a week, using Github Actions.
