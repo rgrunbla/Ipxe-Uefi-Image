@@ -1,8 +1,8 @@
-name: 'Re-Generate Ipxe Uefi Iso once a week'
+name: "Re-Generate Ipxe Uefi Iso once a week"
 on:
   push:
   schedule:
-    - cron: '0 14 * * 1'
+    - cron: "0 14 * * 1"
 
 jobs:
   tests:
@@ -15,6 +15,8 @@ jobs:
         run: "sudo apt-get install -y p7zip-full mkisofs gcc binutils make perl liblzma-dev mtools syslinux isolinux"
       - name: Clone the ipxe repo
         run: "git clone git://git.ipxe.org/ipxe.git"
+      - name: Enable PING
+        run: "cd ipxe/src && sed -i 's/\\/\\/#define PING_CMD/#define PING_CMD/' config/general.h"
       - name: Make a new iso
         run: "cd ipxe/src && make DEBUG=ndp,udp,ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.iso && make DEBUG=ndp,udp,ipv6,dhcpv6,icmpv6 bin-x86_64-efi/ipxe.efi"
       - name: Get the ipxe iso
